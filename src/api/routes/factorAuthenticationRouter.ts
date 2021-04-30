@@ -4,7 +4,7 @@ import factorAuthenticationController from '../controllers/factorAuthenticationC
 const router = Router()
 const authenticationController = new factorAuthenticationController();
 
-router.post('/generate-code', authenticationController.createAuthCode)
-router.post('/verify-code', authenticationController.validateAuthCode)
+router.post('/request-otp', authenticationController.createAuthCode)
+router.post('/verify-otp', authenticationController.validateAuthCode)
 
 export default router

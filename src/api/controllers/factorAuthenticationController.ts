@@ -1,5 +1,6 @@
 import express from 'express'
-import pool from '../../config/dbconnector';
+import pool from '../../config/dbconnector'
+import moment from 'moment'
 
 class factorAuthenticationController {
 
@@ -33,6 +34,11 @@ class factorAuthenticationController {
             const sql = `SELECT code, phone FROM auth_codes WHERE code = ${auth_code} AND phone = ${phone_number}`
             const {rows} = await client.query(sql)
             client.release()
+            //check if code expired
+            if(moment(rows.created_at).diff(moment(), 'seconds') > 60) {
+                return res.status(403).send({success: false, message: "Authentication code expired"})
+            }
+
             return res.status(200).send({success: true, message: "Authentication successful", data: rows})
         }catch(e) {
             return res.status(403).send({success: false, message: "Authentication failed"})
