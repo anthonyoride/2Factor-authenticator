@@ -1,5 +1,6 @@
 import express from 'express'
-import bodyParser from 'body-parser';
+import bodyParser from 'body-parser'
+import cors from 'cors'
 import authenticationRouter from './api/routes/factorAuthenticationRouter'
 import pool from './config/dbconnector'
 
@@ -14,8 +15,9 @@ class Server {
     }
 
     private config() {
-        this.app.use(bodyParser.urlencoded({ extended: true}))
-        this.app.use(bodyParser.json({ limit: '1mb' }))
+        this.app.use(bodyParser.urlencoded({extended: true}))
+        this.app.use(bodyParser.json({limit: '1mb'}))
+        this.app.use(cors())
     }
 
     private dbConnect() {

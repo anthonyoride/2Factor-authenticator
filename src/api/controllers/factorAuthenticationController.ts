@@ -20,7 +20,7 @@ class factorAuthenticationController {
             console.log(authCode)
             return res.status(201).send({success: true, message: `Authentication code sent to ${phone_number}`})
         }catch(error) {
-            return res.status(400).send(error)
+            return res.status(500).send(error)
         }
     }
 
@@ -31,19 +31,19 @@ class factorAuthenticationController {
             const client = await pool.connect()
 
             //validate auth code
-            const sql = `SELECT code, phone FROM auth_codes WHERE code = ${auth_code} AND phone = ${phone_number}`
+            const sql = `SELECT * FROM auth_codes WHERE code = '${auth_code}' AND phone = '${phone_number}'`
             const {rows} = await client.query(sql)
             client.release()
             //check if code expired
-            if(moment(rows.created_at).diff(moment(), 'seconds') > 60) {
+            if(moment(rows[0].created_at).diff(moment(), 'seconds') > 60) {
                 return res.status(403).send({success: false, message: "Authentication code expired"})
             }
 
             return res.status(200).send({success: true, message: "Authentication successful", data: rows})
-        }catch(e) {
-            return res.status(403).send({success: false, message: "Authentication failed"})
+        }catch(error) {
+            return res.status(500).send(error)
         }
     }
 }
 
-export default factorAuthenticationController;
+export default factorAuthenticationController
